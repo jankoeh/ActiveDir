@@ -7,21 +7,20 @@
 #include <mutex>
 #include <thread>
 
-class FileWorker
+class AbstractFileWorker
 {
 public:
-    FileWorker();
-    FileWorker(std::string indir, std::string outdir, std::string command);
+    AbstractFileWorker();
+    AbstractFileWorker(std::string indir, std::string outdir);
     void process_files();
     void start_thread();
     void add_file(std::string filename);             //filename without dir
-    void set_valid_extension(std::string extension); //not case sensitive
+    void add_valid_extension(std::string extension); //not case sensitive
     std::string get_indir(){return indir;}
 private:
     std::string indir;
     std::string outdir;
-    std::string get_cmd(std::string infile, std::string outfile);
-    virtual void process_file(std::string infile, std::string outfile);
+    virtual void process_file(std::string infile, std::string outfile)=0;
     std::list<std::string> files;
     std::set<std::string> valid_extensions;
 
@@ -30,12 +29,13 @@ private:
     std::mutex accessing_list;
 };
 
-class FWSysCmd:public FileWorker
+class SysCmdFileWorker:public AbstractFileWorker
 {
-    FWSysCmd(std::string indir, std::string outdir, std::string command);
-    void process_file(std::string infile, std::string outfile);
+public:
+    SysCmdFileWorker(std::string indir, std::string outdir, std::string command);
 private:
     std::string command;
+    void process_file(std::string infile, std::string outfile);
 };
 
 #endif // FILEWORKER_H

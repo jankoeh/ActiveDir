@@ -4,23 +4,24 @@
 #include <iostream>
 
 
-void thread_helper(FileWorker *fw){
+void thread_helper(AbstractFileWorker *fw){
     fw->process_files();
 }
 
-FileWorker::FileWorker()
-{
-
-}
-
-FileWorker::FileWorker(std::string indir, std::string outdir, std::string command):
-    indir(indir+"/"), outdir(outdir+"/"), command(command)
+AbstractFileWorker::AbstractFileWorker()
 {
     thread_is_running = false;
     worker_thread = NULL;
 }
 
-void FileWorker::process_files(){
+AbstractFileWorker::AbstractFileWorker(std::string indir, std::string outdir):
+    indir(indir+"/"), outdir(outdir+"/")
+{
+    thread_is_running = false;
+    worker_thread = NULL;
+}
+
+void AbstractFileWorker::process_files(){
     thread_is_running = true;
     while(1){
         accessing_list.lock();
@@ -32,27 +33,24 @@ void FileWorker::process_files(){
         accessing_list.unlock();
         int dotpos = filename.rfind(".");
         if (dotpos < 0){
-            std::cout << "Could not determine file extension: "<<filename<<std::endl;
-            continue;
+            dotpos = filename.length();
         }
-        std::string basename = filename.substr(0, dotpos);
         std::string extension = filename.substr(dotpos);
         std::transform(extension.begin(), extension.end(),
                        extension.begin(), ::tolower);
-        if(valid_extensions.find(extension)==valid_extensions.end()){
+        if(valid_extensions.find(extension)==valid_extensions.end() &&
+           valid_extensions.find(".allowall")==valid_extensions.end()){
             std::cout <<"Invalid extension: "<<extension<<std::endl;
             continue;
         }
         //do work
-        std::string cmd = get_cmd(indir+filename,outdir+filename);
-        std::cout <<cmd<<std::endl;
-        system(cmd.c_str());
+        process_file(indir+filename,outdir+filename);
     }
     accessing_list.unlock();
     thread_is_running = false;
 }
 
-void FileWorker::start_thread(){
+void AbstractFileWorker::start_thread(){
     if (!thread_is_running){
         delete worker_thread; //not neccessary because of detach?
         worker_thread = new std::thread(thread_helper, this);
@@ -60,20 +58,27 @@ void FileWorker::start_thread(){
     }
 }
 
-void FileWorker::add_file(std::string filename){
+void AbstractFileWorker::add_file(std::string filename){
     accessing_list.lock();
     files.push_back(filename);
     accessing_list.unlock();
 
 }
 
-void FileWorker::set_valid_extension(std::string extension){
+void AbstractFileWorker::add_valid_extension(std::string extension){
+    if(extension[0] != '.'){
+        extension = '.'+extension;
+    }
     std::transform(extension.begin(), extension.end(),
                    extension.begin(), ::tolower);
     valid_extensions.insert(extension);
 }
 
-std::string FileWorker::get_cmd(std::string infile, std::string outfile){
+
+SysCmdFileWorker::SysCmdFileWorker(std::string indir, std::string outdir, std::string command):
+    command(command),AbstractFileWorker(indir, outdir){;}
+
+void SysCmdFileWorker::process_file(std::string infile, std::string outfile){
     std::string cmd = command;
     while(cmd.find("F_IN") != std::string::npos){
         int pos = cmd.find("F_IN");
@@ -83,5 +88,6 @@ std::string FileWorker::get_cmd(std::string infile, std::string outfile){
         int pos = cmd.find("F_OUT");
         cmd.replace(pos, 5, outfile);
     }
-    return cmd;
+    std::cout <<cmd<<std::endl;
+    system(cmd.c_str());
 }

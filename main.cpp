@@ -19,14 +19,13 @@ int main(int argc, char *argv[])
             i++;
         }
         else if(strcmp (argv[i], "-R")==0){
-            FileWorker *fw = new FileWorker(argv[i+1], argv[i+2], argv[i+3]);
+            SysCmdFileWorker *fw = new SysCmdFileWorker(argv[i+1], argv[i+2], argv[i+3]);
             //Error handling
             i+=4;
-            cout <<argv[i]<<endl;
             while(i<argc){
                 if(strcmp (argv[i], "-R")==0)
                     break;
-                fw->set_valid_extension(argv[i]);
+                fw->add_valid_extension(argv[i]);
                 cout <<argv[i]<<endl;
                 i++;
             }

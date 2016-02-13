@@ -16,7 +16,7 @@ DirWatcher::~DirWatcher()
 }
 
 
-void DirWatcher::add_FileWorker(FileWorker *fw)
+void DirWatcher::add_FileWorker(AbstractFileWorker *fw)
 {
     int wd = inotify_add_watch( fd, fw->get_indir().c_str(), IN_CLOSE_WRITE  );
     wd_fw[wd] = fw;

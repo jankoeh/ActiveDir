@@ -18,11 +18,11 @@ public:
     DirWatcher();
     ~DirWatcher();
     void add_dir(std::string indir, std::string outdir);
-    void add_FileWorker(FileWorker *fw);
+    void add_FileWorker(AbstractFileWorker *fw);
     void watch();
 private:
     int fd;
-    std::map<int,FileWorker*> wd_fw;
+    std::map<int,AbstractFileWorker*> wd_fw;
 };
 
 #endif // DIRWATCHER_H
