@@ -3,11 +3,18 @@
 #include <algorithm>
 #include <iostream>
 
+
 void thread_helper(FileWorker *fw){
     fw->process_files();
 }
 
-FileWorker::FileWorker(const std::string indir, const std::string outdir):indir(indir+"/"), outdir(outdir+"/")
+FileWorker::FileWorker()
+{
+
+}
+
+FileWorker::FileWorker(std::string indir, std::string outdir, std::string command):
+    indir(indir+"/"), outdir(outdir+"/"), command(command)
 {
     thread_is_running = false;
     worker_thread = NULL;
@@ -37,10 +44,9 @@ void FileWorker::process_files(){
             continue;
         }
         //do work
-        std::string new_fn = outdir+basename+"_small"+extension;
-        std::string command = "convert "+indir+filename+" -resize 50% "+new_fn;
-        std::cout <<command<<std::endl;
-        system(command.c_str());
+        std::string cmd = get_cmd(indir+filename,outdir+filename);
+        std::cout <<cmd<<std::endl;
+        system(cmd.c_str());
     }
     accessing_list.unlock();
     thread_is_running = false;
@@ -67,4 +73,15 @@ void FileWorker::set_valid_extension(std::string extension){
     valid_extensions.insert(extension);
 }
 
-
+std::string FileWorker::get_cmd(std::string infile, std::string outfile){
+    std::string cmd = command;
+    while(cmd.find("F_IN") != std::string::npos){
+        int pos = cmd.find("F_IN");
+        cmd.replace(pos, 4, infile);
+    }
+    while(cmd.find("F_OUT") != std::string::npos){
+        int pos = cmd.find("F_OUT");
+        cmd.replace(pos, 5, outfile);
+    }
+    return cmd;
+}
