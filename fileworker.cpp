@@ -39,8 +39,9 @@ void AbstractFileWorker::process_files(){
         std::transform(extension.begin(), extension.end(),
                        extension.begin(), ::tolower);
         if(valid_extensions.find(extension)==valid_extensions.end() &&
-           valid_extensions.find(".allowall")==valid_extensions.end()){
-            std::cout <<"Invalid extension: "<<extension<<std::endl;
+           valid_extensions.find(".allowall")==valid_extensions.end() &&
+           valid_extensions.size()!=0){
+            std::cout <<"Invalid extension: "<<extension<<" for "<<filename<<std::endl;
             continue;
         }
         //do work
@@ -67,7 +68,7 @@ void AbstractFileWorker::add_file(std::string filename){
 
 void AbstractFileWorker::add_valid_extension(std::string extension){
     if(extension[0] != '.'){
-        extension = '.'+extension;
+        extension = "."+extension;
     }
     std::transform(extension.begin(), extension.end(),
                    extension.begin(), ::tolower);

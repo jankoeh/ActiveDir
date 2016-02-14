@@ -1,3 +1,4 @@
+
 #include "dirwatcher.h"
 #include <unistd.h>
 
@@ -5,7 +6,9 @@
 DirWatcher::DirWatcher()
 {
     fd = inotify_init1(IN_NONBLOCK);
-    //TODO: error check
+    if(fd<0){
+        perror("Error on Inotify: ");
+    }
 }
 DirWatcher::~DirWatcher()
 {
@@ -31,7 +34,8 @@ void DirWatcher::watch()
     while(1){
         select( fd+1, &watch_set, NULL, NULL, NULL );
         int  length = read( fd, buffer, EVENT_BUF_LEN );
-        //TODO: error check
+        if(length<0)
+            perror("Error during read(): ");
         int i = 0;
         while ( i < length ) {
             struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
