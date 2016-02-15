@@ -1,8 +1,6 @@
 #include <iostream>
-
 #include "fileworker.h"
 #include "dirwatcher.h"
-#include <string.h>
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -30,10 +28,10 @@ int main(int argc, char *argv[])
             SysCmdFileWorker *fw = new SysCmdFileWorker(argv[i+1], argv[i+2], argv[i+3]);
             i+=4;
             while(i<argc){
-                if(strcmp (argv[i], "-s")==0)
+                if(strcmp (argv[i], "-s")==0){
                     break;
+                }
                 fw->add_valid_extension(argv[i]);
-                cout <<argv[i]<<endl;
                 i++;
             }
             dw.add_FileWorker(fw);

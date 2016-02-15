@@ -17,6 +17,11 @@ AbstractFileWorker::AbstractFileWorker()
 AbstractFileWorker::AbstractFileWorker(std::string indir, std::string outdir):
     indir(indir+"/"), outdir(outdir+"/")
 {
+    std::cout << "Setting up indir/outdir"<<std::endl;
+    std::string cmd = "mkdir -p "+indir;
+    system(cmd.c_str());
+    cmd = "mkdir -p "+outdir;
+    system(cmd.c_str());
     thread_is_running = false;
     worker_thread = NULL;
 }
