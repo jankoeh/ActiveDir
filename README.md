@@ -26,6 +26,6 @@ make
 Known Problems:
 ---------------
 
-* Files which are moved into the directory are ignored. I guess this is caused by the use of `IN_CLOSE_WRITE` events. Either fix this or declare ia a feature.
+* Files which are moved into the directory are ignored. I guess this is caused by the use of `IN_CLOSE_WRITE` events. Either fix this or declare ia a feature. **FIXED**
 
 

@@ -21,7 +21,7 @@ DirWatcher::~DirWatcher()
 
 void DirWatcher::add_FileWorker(AbstractFileWorker *fw)
 {
-    int wd = inotify_add_watch( fd, fw->get_indir().c_str(), IN_CLOSE_WRITE  );
+    int wd = inotify_add_watch( fd, fw->get_indir().c_str(), IN_CLOSE_WRITE|IN_MOVE  );
     wd_fw[wd] = fw;
 }
 
@@ -39,7 +39,7 @@ void DirWatcher::watch()
         int i = 0;
         while ( i < length ) {
             struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
-            if ( event->len && event->mask & IN_CLOSE_WRITE ) {
+            if ( event->len && event->mask & (IN_CLOSE_WRITE|IN_MOVE) ) {
                 wd_fw[event->wd]->add_file(std::string(event->name));
                 wd_fw[event->wd]->start_thread();
             }
