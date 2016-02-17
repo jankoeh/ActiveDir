@@ -17,7 +17,7 @@ AbstractFileWorker::AbstractFileWorker()
 AbstractFileWorker::AbstractFileWorker(std::string indir, std::string outdir):
     indir(indir+"/"), outdir(outdir+"/")
 {
-    std::cout << "Setting up indir/outdir"<<std::endl;
+    std::cout << "Setting up indir/outdir: "<<indir <<"/"<<outdir <<std::endl;
     std::string cmd = "mkdir -p "+indir;
     system(cmd.c_str());
     cmd = "mkdir -p "+outdir;
@@ -36,6 +36,7 @@ void AbstractFileWorker::process_files(){
         std::string filename = files.front();
         files.pop_front();
         accessing_list.unlock();
+        std::cout << "Processing: "<<filename<<std::endl;
         int dotpos = filename.rfind(".");
         if (dotpos < 0){
             dotpos = filename.length();

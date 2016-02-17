@@ -1,11 +1,11 @@
 #include <iostream>
+#include <string.h>
 #include "fileworker.h"
 #include "dirwatcher.h"
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-
     DirWatcher dw;
     int i = 1;
     while(i<argc){
