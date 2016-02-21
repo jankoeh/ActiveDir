@@ -53,8 +53,8 @@ void AbstractFileWorker::process_files(){
         //do work
         process_file(indir+filename,outdir+filename);
     }
-    accessing_list.unlock();
-    thread_is_running = false;
+    thread_is_running = false; //first: set thread running=false
+    accessing_list.unlock();   //second: unlock files. -> Otherwise a file could be added between unlock and setting thread_running=false
 }
 
 void AbstractFileWorker::start_thread(){

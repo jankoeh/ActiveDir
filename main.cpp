@@ -9,7 +9,6 @@ int main(int argc, char *argv[])
     DirWatcher dw;
     int i = 1;
     while(i<argc){
-        cout <<argv[i]<<endl;
         if(strcmp (argv[i],"-h")==0){
             cout <<"Active Directory - v. 0.1"<<endl;
             cout <<"Watches directories for new files an applies a command which modiefies the given file or creates a resulting file in a target directory.";
